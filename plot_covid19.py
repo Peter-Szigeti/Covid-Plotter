@@ -105,9 +105,9 @@ def plot_deathcountPerAgeGroup(df):
     df.plot.area(x = 'Dátum',xlabel = 'Dátum',ylabel = 'Halálozások száma',title = 'Napi COVID19 Halálozások Korcsoportonként Magyarországon',stacked = True,ax=ax)
 
     plt.savefig('Results/deathcountPerAgeGroup_{}.png'.format(date.today().strftime('%Y-%m-%d')))
+    plt.show()
     print('Done.')
 
 url = "https://koronavirus.gov.hu/elhunytak"
-initFoldersAndData(url)
 df = deathcountPerAgeGroup(20)
 plot_deathcountPerAgeGroup(df)
