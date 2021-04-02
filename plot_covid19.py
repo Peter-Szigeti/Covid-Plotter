@@ -35,12 +35,14 @@ def scrapeUrl(url):
     df.to_csv('Data/covid19Deaths_scraped_{}.csv'.format(date.today().strftime('%Y-%m-%d')))
 
 def downloadTable(url):
-    print('Beginning file download with urllib2...')
     urllib.request.urlretrieve(url, 'Data/covid19HungaryStatistics_{}.xlsx'.format(date.today().strftime('%Y-%m-%d')))
 
 def initFoldersAndData(url):
+    print('Creating folders...')
     initFolders()
+    print('Beginning scraping with BeautifulSoup...')
     scrapeUrl(url)
+    print('Beginning file download...')
     downloadTable('https://docs.google.com/spreadsheets/d/1e4VEZL1xvsALoOIq9V2SQuICeQrT5MtWfBm32ad7i8Q/export?format=xlsx&gid=311133316')
 
 def dateTheScrape():
@@ -59,10 +61,12 @@ def dateTheScrape():
 
 def deathcountPerAgeGroup(step):
 
-    '''A fügvénynek ez a fele csinál egy dataframet,melynek első oszlopában a dátumok találhatóak,
+    '''
+    A fügvénynek ez a fele csinál egy dataframet,melynek első oszlopában a dátumok találhatóak,
     a második oszlopban pedig a dátumhoz tartozó halottak korai korcsoportra kerekítve
-    a korcsoportok szélességét a "step" paraméterrel lehet megadni'''
-
+    a korcsoportok szélességét a "step" paraméterrel lehet megadni
+    '''
+    print('Processing data...')
     df = dateTheScrape()
     age_groups = [i for i in range(15,106,step)]
     for i in range(len(df)):
@@ -82,8 +86,10 @@ def deathcountPerAgeGroup(step):
     df['Dátum']  = df['Dátum'].apply(lambda x:x.strftime('%Y_%m_%d'))
     df = df[::-1]
 
-    '''Ez a fele a fügvénynek csinál egy oszlopot minden korcsoportnak, melynek soraiban az adott naphoz tartozó,
-     halálozások száma van beírva korcsoportonként. '''
+    '''
+    Ez a fele a fügvénynek csinál egy oszlopot minden korcsoportnak, melynek soraiban az adott naphoz tartozó,
+     halálozások száma van beírva korcsoportonként.
+    '''
 
     for el in range(15,106,step):
         df[str(el)] = 0.0
@@ -93,17 +99,15 @@ def deathcountPerAgeGroup(step):
     return df
 
 def plot_deathcountPerAgeGroup(df):
+    print('Creating the plots...')
     fig, ax = plt.subplots()
     fig.set_size_inches(18.5, 10.5)
     df.plot.area(x = 'Dátum',xlabel = 'Dátum',ylabel = 'Halálozások száma',title = 'Napi COVID19 Halálozások Korcsoportonként Magyarországon',stacked = True,ax=ax)
 
     plt.savefig('Results/deathcountPerAgeGroup_{}.png'.format(date.today().strftime('%Y-%m-%d')))
+    print('Done.')
 
 url = "https://koronavirus.gov.hu/elhunytak"
 initFoldersAndData(url)
 df = deathcountPerAgeGroup(20)
 plot_deathcountPerAgeGroup(df)
-
-
-
-
