@@ -10,7 +10,6 @@ from matplotlib import pyplot as plt
 '''
 Dependencies: Matplotlib,BeautifulSoup, Pandas
 Útmutatás a programhoz:tedd be egy mappába a .py filet és futtasd le és futtasd le:)
-
 '''
 
 def initFolders():
@@ -38,9 +37,9 @@ def downloadTable(url):
     urllib.request.urlretrieve(url, 'Data/covid19HungaryStatistics_{}.xlsx'.format(date.today().strftime('%Y-%m-%d')))
 
 def initFoldersAndData(url):
-    print('Creating folders...')
+    print('Trying to create folders...')
     initFolders()
-    print('Beginning scraping with BeautifulSoup...')
+    print('Beginning scraping tables with Pandas...')
     scrapeUrl(url)
     print('Beginning file download...')
     downloadTable('https://docs.google.com/spreadsheets/d/1e4VEZL1xvsALoOIq9V2SQuICeQrT5MtWfBm32ad7i8Q/export?format=xlsx&gid=311133316')
@@ -98,16 +97,17 @@ def deathcountPerAgeGroup(step):
     del df['death_age_rounded']
     return df
 
-def plot_deathcountPerAgeGroup(df):
+def plot_deathcountPerAgeGroup(df,step):
     print('Creating the plots...')
     fig, ax = plt.subplots()
     fig.set_size_inches(18.5, 10.5)
-    df.plot.area(x = 'Dátum',xlabel = 'Dátum',ylabel = 'Halálozások száma',title = 'Napi COVID19 Halálozások Korcsoportonként Magyarországon',stacked = True,ax=ax)
+    df.plot.area(x = 'Dátum',xlabel = 'Dátum',ylabel = 'Halálozások száma',title = 'Napi COVID19 Halálozások Korcsoportonként Magyarországon',stacked = True,ax=ax,grid=True)
 
-    plt.savefig('Results/deathcountPerAgeGroup_{}.png'.format(date.today().strftime('%Y-%m-%d')))
-    plt.show()
+    plt.savefig('Results/deathcountPerAgeGroup_wstep{}_{}.png'.format(step,date.today().strftime('%Y-%m-%d')))
     print('Done.')
 
 url = "https://koronavirus.gov.hu/elhunytak"
-df = deathcountPerAgeGroup(20)
-plot_deathcountPerAgeGroup(df)
+step = int(input('Enter your step size: '))
+initFoldersAndData(url)
+df = deathcountPerAgeGroup(step)
+plot_deathcountPerAgeGroup(df,step)

@@ -1,0 +1,1 @@
+C:\Python\python.exe "P:\Python\Covid19\plot_covid19.py"
