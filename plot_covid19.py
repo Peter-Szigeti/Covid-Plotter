@@ -102,9 +102,10 @@ def plot_deathcountPerAgeGroup(df):
     fig, ax = plt.subplots()
     fig.set_size_inches(18.5, 10.5)
     df.plot.area(x = 'Dátum',xlabel = 'Dátum',ylabel = 'Halálozások száma',title = 'Napi COVID19 Halálozások Korcsoportonként Magyarországon',stacked = True,ax=ax,grid=True)
-
+    plt.savefig('Results/deathcountPerAgeGroup_wstep_{}.png'.format(date.today().strftime('%Y-%m-%d')))
     plt.show()
     print('Done.')
 
+initFoldersAndData()
 df = deathcountPerAgeGroup()
 plot_deathcountPerAgeGroup(df)
