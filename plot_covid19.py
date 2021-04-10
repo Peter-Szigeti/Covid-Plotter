@@ -59,12 +59,12 @@ def dateTheScrape():
     df.to_csv('Data/covid19Deaths_scraped_DATED_{}.csv'.format(date.today().strftime('%Y-%m-%d')))
     return df
 
-def deathcountPerAgeGroup():
+def deathcountPerAgeGroup(weighted):
 
     '''
     A fügvénynek ez a fele csinál egy dataframet,melynek első oszlopában a dátumok találhatóak,
     a második oszlopban pedig a dátumhoz tartozó halottak korai korcsoportra kerekítve
-    a korcsoportok szélességét a "step" paraméterrel lehet megadni
+    weighted = bool
     '''
     print('Processing data...')
     df = dateTheScrape()
@@ -89,23 +89,29 @@ def deathcountPerAgeGroup():
     Ez a fele a fügvénynek csinál egy oszlopot minden korcsoportnak, melynek soraiban az adott naphoz tartozó,
      halálozások száma van beírva korcsoportonként.
     '''
-
+    if weighted:
+        age_groups_weights = [3700000,652000,838000,750000,663000,572000,651000,643000,482000,377000,240000,134000,65245]
+    else:
+        age_groups_weights = [1 for x in range(len(age_groups))]
+    j = 0
     for el in age_groups:
         df[el] = 0.0
         for i in range(len(df)):
-            df[str(el)][i] = df['death_age_rounded'][i].count(el)
+            df[str(el)][i] = df['death_age_rounded'][i].count(el)/age_groups_weights[j]
+        j+=1
     del df['death_age_rounded']
     return df
 
-def plot_deathcountPerAgeGroup(df):
+def plot_deathcountPerAgeGroup(df,weighted):
     print('Creating the plots...')
     fig, ax = plt.subplots()
     fig.set_size_inches(18.5, 10.5)
     df.plot.area(x = 'Dátum',xlabel = 'Dátum',ylabel = 'Halálozások száma',title = 'Napi COVID19 Halálozások Korcsoportonként Magyarországon',stacked = True,ax=ax,grid=True)
-    plt.savefig('Results/deathcountPerAgeGroup_wstep_{}.png'.format(date.today().strftime('%Y-%m-%d')))
+    plt.savefig('Results/deathcountPerAgeGroup_{}_wstep_{}.png'.format(str(weighted),date.today().strftime('%Y-%m-%d')))
     plt.show()
     print('Done.')
 
+weighted = input("Weighted? : ")
 initFoldersAndData()
-df = deathcountPerAgeGroup()
-plot_deathcountPerAgeGroup(df)
+df = deathcountPerAgeGroup(weighted)
+plot_deathcountPerAgeGroup(df,weighted)
