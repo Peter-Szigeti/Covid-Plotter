@@ -107,11 +107,12 @@ def plot_deathcountPerAgeGroup(df,weighted):
     fig, ax = plt.subplots()
     fig.set_size_inches(18.5, 10.5)
     df.plot.area(x = 'Dátum',xlabel = 'Dátum',ylabel = 'Halálozások száma',title = 'Napi COVID19 Halálozások Korcsoportonként Magyarországon',stacked = True,ax=ax,grid=True)
-    plt.savefig('Results/deathcountPerAgeGroup_{}_wstep_{}.png'.format(str(weighted),date.today().strftime('%Y-%m-%d')))
+    if weighted:
+        plt.savefig('Results/deathcountPerAgeGroup_weighted_{}.png'.format(date.today().strftime('%Y-%m-%d')))
+    else:
+        plt.savefig('Results/deathcountPerAgeGroup_{}.png'.format(date.today().strftime('%Y-%m-%d')))
     plt.show()
     print('Done.')
 
-weighted = input("Weighted? : ")
-initFoldersAndData()
-df = deathcountPerAgeGroup(weighted)
-plot_deathcountPerAgeGroup(df,weighted)
+plot_deathcountPerAgeGroup(deathcountPerAgeGroup(0),0)
+plot_deathcountPerAgeGroup(deathcountPerAgeGroup(1),1)
