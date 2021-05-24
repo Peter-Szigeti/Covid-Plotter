@@ -111,8 +111,7 @@ def plot_deathcountPerAgeGroup(df,weighted):
         plt.savefig('Results/deathcountPerAgeGroup_weighted_{}.png'.format(date.today().strftime('%Y-%m-%d')))
     else:
         plt.savefig('Results/deathcountPerAgeGroup_{}.png'.format(date.today().strftime('%Y-%m-%d')))
-    plt.show()
     print('Done.')
-
+initFoldersAndData()
 plot_deathcountPerAgeGroup(deathcountPerAgeGroup(0),0)
 plot_deathcountPerAgeGroup(deathcountPerAgeGroup(1),1)
